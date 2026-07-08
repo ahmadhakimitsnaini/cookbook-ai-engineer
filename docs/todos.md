@@ -3,6 +3,7 @@
 This document tracks the detailed, step-by-step implementation plan for Document Copilot, adhering strictly to the architecture constraints and agent guidelines.
 
 ## Phase 1: Project Scaffolding
+
 - [ ] **Backend Setup**
   - [ ] Initialize FastAPI app layout (`app/main.py`, `app/config.py`, `app/api/`, etc.).
   - [ ] Add `pydantic-settings` and create `app/config.py` as the single source of truth for environment variables.
@@ -18,6 +19,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Setup React Router (`src/App.tsx`) with a basic chat route.
 
 ## Phase 2: Database and Migrations
+
 - [ ] **SQLAlchemy Models**
   - [ ] Create `app/database/models.py`.
   - [ ] Define `profiles` table (tied to Supabase auth user IDs).
@@ -34,6 +36,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Apply migration to local/hosted Supabase DB.
 
 ## Phase 3: Auth & Shared Communication Layer
+
 - [ ] **Frontend Auth**
   - [ ] Install `@supabase/supabase-js`.
   - [ ] Create `src/lib/supabase.ts` for browser Supabase client.
@@ -49,6 +52,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Setup robust error handling (`ApiError`) and timeout logic.
 
 ## Phase 4: Core Chat Interface (Stubbed)
+
 - [ ] **Backend Streaming Endpoint**
   - [ ] Create `POST /chat/stream` in `app/api/chat.py`.
   - [ ] Require `get_current_user` dependency.
@@ -59,6 +63,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Connect the AI SDK `useChat` hook to point to the FastAPI `/chat/stream` endpoint with the correct transport headers.
 
 ## Phase 5: Ingestion Pipeline
+
 - [ ] **Data Processing**
   - [ ] Create one-off `ingest/` scripts to read downloaded HTML/txt SEC filings.
   - [ ] Convert 10-K/10-Q filings to normalized Markdown.
@@ -68,6 +73,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Write source documents and chunks into Supabase Postgres using the service-role key.
 
 ## Phase 6: Hybrid Retrieval Layer
+
 - [ ] **Database Helpers**
   - [ ] Implement `pgvector` semantic search query in `app/retrieval/queries.py`.
   - [ ] Implement Postgres full-text (`to_tsquery`) search in `app/retrieval/queries.py`.
@@ -78,6 +84,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Build `DocumentRetriever` class that accepts a user query and returns fused `SourcePassage` records.
 
 ## Phase 7: LLM Agent & Grounding
+
 - [ ] **PydanticAI Setup**
   - [ ] Create `app/assistant/agent.py` defining the PydanticAI `Agent`.
   - [ ] Inject `DocumentAgentDeps` (retriever, grounding validator).
@@ -93,6 +100,7 @@ This document tracks the detailed, step-by-step implementation plan for Document
   - [ ] Persist the final user message, assistant message, and citations into the DB.
 
 ## Phase 8: Frontend Polish & Verification
+
 - [ ] **Citation UI**
   - [ ] Build components to render in-line citations `[1]`, `[2]`.
   - [ ] Build a side-panel or pop-up to show the underlying `SourcePassage` excerpt that the agent cited.
