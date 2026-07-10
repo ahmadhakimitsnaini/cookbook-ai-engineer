@@ -46,3 +46,26 @@ Mengandalkan metode **Socratic Troubleshooting**, alih-alih langsung memecahkan 
 1. Melakukan **RCA (Root Cause Analysis)**.
 2. Memahami perilaku sistem operasi, mekanisme koneksi *database*, dan *compiler* sebelum mengetikkan sebaris kode apa pun. 
 3. Menyelesaikan masalah di tingkat konsep (arsitektural), lalu mengeksekusinya ke dalam sintaks.
+
+---
+
+## 6. Resolusi Jaringan & Database Driver
+Saat menghubungkan SQLAlchemy dengan Supabase, kita memecahkan dua masalah krusial:
+- **Konflik DBAPI Driver:** Secara *default*, awalan `postgresql://` akan memanggil driver lawas `psycopg2`. Karena ekosistem kita menggunakan pustaka modern (`psycopg[binary]`), kita wajib merombak URL tersebut menjadi `postgresql+psycopg://`.
+- **Jebakan IPv6 vs IPv4 Proxy:** Domain klasik Supabase (`db.*.supabase.co`) kini hanya melayani jaringan IPv6. Jika ISP lokal Anda gagal me-resolusi DNS-nya, Supabase menyediakan "pintu belakang" berupa domain *Pooler IPv4* (`aws-0-*.pooler.supabase.com`). Syarat mutlaknya: kita harus mengubah port menjadi **5432** (agar dialihkan ke mode *Direct/Session*) dan mengubah nama pengguna menjadi `postgres.[ID_PROYEK]`.
+
+---
+
+## 7. Arsitektur Pencarian: Hybrid Search (RRF)
+Sistem RAG tingkat tinggi wajib memadukan dua kutub yang berlawanan:
+- **Kecerdasan Vektor (pgvector):** Ahli memahami "makna" dan sinonim, tetapi buta huruf dan rentan berhalusinasi saat dihadapkan pada kata spesifik, singkatan, atau ID mutlak (misal: "Q3 2024" atau "iPhone 15 Pro").
+- **Kekakuan Leksikal (tsvector):** Tidak mengerti konteks (hanya mencocokkan kata perkata), namun menjadi pengawal yang sangat teliti untuk presisi data.
+- **Pelajaran Praktis:** Tabel data kita mengawinkan keduanya (*Hybrid Search* / *Reciprocal Rank Fusion*) secara berdampingan.
+
+---
+
+## 8. Modifikasi Skema Lanjutan di Alembic
+Meski perintah `--autogenerate` sangat sakti, ia memiliki titik buta terhadap teknologi tingkat lanjut. Kita belajar untuk menyempurnakan *script* Python hasil *generate* Alembic dengan menginjeksi sintaks SQL secara manual (`op.execute`):
+1. **HNSW Index:** (`vector_cosine_ops`) Untuk mengakselerasi pencarian `vector` secara dramatis.
+2. **GIN Index:** Mempercepat pencarian *full-text search* (`tsvector`) dan filter metadata (`JSONB`).
+3. **Keamanan:** Memasang gembok **Row-Level Security (RLS)** pada tabel-tabel utama secara terprogram.
