@@ -1,9 +1,35 @@
-[project]
-name = "document-copilot-backend"
-version = "0.1.0"
-requires-python = ">=3.12"
-dependencies = []
-
-[tool.uv]
-add-bounds = "exact"
-exclude-newer = "7 days"
+    [project]                                                                                                       
+    name = "document-copilot-backend"                                                                               
+    version = "0.1.0"                                                                                               
+    description = "FastAPI backend for Document Copilot"                                                            
+    requires-python = ">=3.12"                                                                                      
+                                                                                                                    
+    dependencies = [                                                                                                
+        "fastapi",                                                                                                  
+        "uvicorn",                                                                                                  
+        "pydantic",                                                                                                 
+        "pydantic-settings",                                                                                        
+        "httpx",                                                                                                    
+        "structlog",                                                                                                
+        "openai",                                                                                                   
+        "supabase",                                                                                                 
+        "pydantic-ai",                                                                                              
+        "sqlalchemy",                                                                                               
+        "alembic",                                                                                                  
+        "psycopg[binary]",                                                                                          
+        "pgvector"                                                                                                  
+    ]                                                                                                               
+                                                                                                                    
+    [project.optional-dependencies]                                                                                 
+    dev = [                                                                                                         
+        "pytest",                                                                                                   
+        "ruff"                                                                                                      
+    ]                                                                                                               
+                                                                                                                    
+    [build-system]                                                                                                  
+    requires = ["hatchling"]                                                                                        
+    build-backend = "hatchling.build"                                                                               
+                                                                                                                    
+    # Ini adalah kunci untuk menyelesaikan masalah import yang kita diskusikan                                      
+    [tool.hatch.build.targets.wheel]                                                                                
+    packages = ["app"]
